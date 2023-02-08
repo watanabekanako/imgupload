@@ -3,17 +3,29 @@ import React from "react";
 import ImageLogo from "./image.svg";
 import "./ImageUpload.css";
 import storage from "./firebase";
-import {ref,  uploadBytes} from "firebase/storage"
+import {ref,  uploadBytes,  getDownloadURL } from "firebase/storage"
+import { getStorage } from "firebase/storage";
 const ImageUploader = () => {
+  const storage = getStorage();
   const OnFileUploadFirebase =(e)=>{
     const file =e.target.files[0];
     const storageRef=ref(storage,"/image/" + file.name);
     uploadBytes(storageRef, file).then((snapshot) => {
       console.log('Uploaded a blob or file!');
     });
-    
   
+    getDownloadURL(ref(storage,"/image/" + file.name))
+    .then((url)=>{
+      // 下記でアップロードしてurlを取得できる
+      console.log("url",url)
+    })
+    console.log("URL",getDownloadURL)
+
   }
+ 
+
+
+
   return (
     <div className="outerBox">
       <div className="title">
@@ -32,6 +44,7 @@ const ImageUploader = () => {
         ファイルを選択
         <input className="imageUploadInput" type="file"  onChange={OnFileUploadFirebase} />
       </Button>
+      <div id="myimg"></div>
     </div>
   );
 };
